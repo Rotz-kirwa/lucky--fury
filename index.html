@@ -2,21 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#15181f" />
+    <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
     <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
+    <title>Lucky Jet</title>
+    <meta name="description" content="Lucky Jet betting dashboard" />
     <meta name="author" content="Lovable" />
 
     <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="Lucky Jet" />
+    <meta property="og:description" content="Lucky Jet betting dashboard" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <script>
+      (() => {
+        if (typeof globalThis.crypto === "undefined") {
+          Object.defineProperty(globalThis, "crypto", {
+            value: {},
+            configurable: true,
+          });
+        }
+
+        if (typeof globalThis.crypto.randomUUID === "function") {
+          return;
+        }
+
+        const fillRandomValues =
+          typeof globalThis.crypto.getRandomValues === "function"
+            ? (array) => globalThis.crypto.getRandomValues(array)
+            : (array) => {
+                for (let index = 0; index < array.length; index += 1) {
+                  array[index] = Math.floor(Math.random() * 256);
+                }
+
+                return array;
+              };
+
+        Object.defineProperty(globalThis.crypto, "randomUUID", {
+          value() {
+            const bytes = fillRandomValues(new Uint8Array(16));
+            bytes[6] = (bytes[6] & 15) | 64;
+            bytes[8] = (bytes[8] & 63) | 128;
+
+            const hex = Array.from(bytes, (byte) =>
+              byte.toString(16).padStart(2, "0"),
+            );
+
+            return [
+              hex.slice(0, 4).join(""),
+              hex.slice(4, 6).join(""),
+              hex.slice(6, 8).join(""),
+              hex.slice(8, 10).join(""),
+              hex.slice(10, 16).join(""),
+            ].join("-");
+          },
+          configurable: true,
+        });
+      })();
+    </script>
   </head>
 
   <body>

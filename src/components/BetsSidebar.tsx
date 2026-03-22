@@ -32,14 +32,24 @@ const fakeBets: Bet[] = [
 ];
 
 const tabs = ["All Bets", "My Bets", "Top"];
+const mobileTabLabels: Record<string, string> = {
+  "All Bets": "All Bets",
+  "My Bets": "Previous",
+  Top: "Top",
+};
 
 const BetsSidebar = () => {
   const [activeTab, setActiveTab] = useState("All Bets");
+  const winningBets = fakeBets.filter((bet) => bet.cashOut);
+  const totalCashOut = winningBets.reduce((sum, bet) => sum + (bet.cashOut ?? 0), 0);
+  const previewAvatars = fakeBets.slice(0, 3);
+  const desktopTitle = activeTab;
+  const mobileTitle = mobileTabLabels[activeTab] ?? activeTab;
 
   return (
     <div className="flex flex-col h-full bg-card rounded-xl border border-border/50 overflow-hidden animate-float-up" style={{ animationDelay: "0.2s" }}>
       {/* Tabs */}
-      <div className="flex border-b border-border/50">
+      <div className="hidden sm:flex border-b border-border/50">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -58,11 +68,58 @@ const BetsSidebar = () => {
         ))}
       </div>
 
+      <div className="sm:hidden px-3 pt-3 pb-2 border-b border-border/50 space-y-3">
+        <div className="flex items-center gap-1 rounded-full bg-secondary/70 p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 rounded-full py-1.5 text-[11px] font-semibold transition-all ${
+                activeTab === tab
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground/80"
+              }`}
+            >
+              {mobileTabLabels[tab] ?? tab}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center">
+              {previewAvatars.map((bet, index) => (
+                <div
+                  key={`${bet.user}-${index}`}
+                  className={`-ml-1 first:ml-0 h-7 w-7 rounded-full border border-card flex items-center justify-center text-[10px] font-bold ${bet.avatarBg}`}
+                >
+                  {bet.avatar}
+                </div>
+              ))}
+            </div>
+            <p className="mt-1 text-[11px] font-medium text-foreground/85">
+              {mobileTitle} <span className="text-muted-foreground">{fakeBets.length} bets</span>
+            </p>
+            <div className="mt-1 h-1 w-20 rounded-full bg-neon-green/20">
+              <div className="h-full w-10 rounded-full bg-neon-green" />
+            </div>
+          </div>
+
+          <div className="text-right">
+            <p className="text-xl font-bold tabular-nums text-foreground">
+              {totalCashOut.toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+            <p className="text-[11px] text-muted-foreground">Total win KES</p>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
-      <div className="px-3 pt-3 pb-2">
+      <div className="hidden sm:block px-3 pt-3 pb-2">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">All Bets</h3>
+            <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">{desktopTitle}</h3>
             <p className="text-[10px] text-muted-foreground">{fakeBets.length} bets</p>
           </div>
           <span className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors">← Previous hand</span>
@@ -118,7 +175,7 @@ const BetsSidebar = () => {
           <span>Provably Fair</span>
         </div>
         <span className="text-[10px] text-muted-foreground">
-          Powered by <span className="font-bold text-foreground/70">USHINDI</span>
+          Powered by <span className="font-bold text-foreground/70">LUCKY JET</span>
         </span>
       </div>
     </div>

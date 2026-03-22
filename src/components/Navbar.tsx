@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur-md border-b border-border/50">
-      <div className="flex items-center justify-between px-4 h-14 max-w-[1440px] mx-auto">
+      <div className="flex items-center justify-between px-4 h-14 w-full">
         {/* Logo */}
         <div className="flex items-center gap-1 select-none">
-          <span className="text-xl font-black tracking-tight text-foreground">USHINDI</span>
-          <span className="text-xl font-black tracking-tight text-primary">CRASH</span>
+          <span className="text-xl font-black tracking-tight text-foreground">LUCKY</span>
+          <span className="text-xl font-black tracking-tight text-primary">JET</span>
         </div>
 
         {/* Right side */}

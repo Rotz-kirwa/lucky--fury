@@ -38,7 +38,7 @@ const JackpotTicker = () => {
       <div className="bg-gradient-to-r from-neon-green/20 via-neon-green/10 to-neon-green/20 border-b border-neon-green/20 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-neon-green font-bold text-sm">KES 25,000</span>
-          <span className="text-foreground/80 text-sm font-medium">Ushindi Crash Jackpot</span>
+          <span className="text-foreground/80 text-sm font-medium">Lucky Jet Jackpot</span>
         </div>
         <button className="p-1.5 rounded-full hover:bg-secondary transition-colors text-neon-green">
           <RefreshCw className="h-4 w-4" />
