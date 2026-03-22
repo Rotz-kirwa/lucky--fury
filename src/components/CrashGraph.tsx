@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { playSoundCue } from "@/lib/sound";
 
 type GameState = "waiting" | "running" | "crashed";
 
@@ -33,6 +34,7 @@ const CrashGraph = () => {
   const crashStartedAtRef = useRef<number | null>(null);
   const nextRoundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const previousGameStateRef = useRef<GameState>("running");
 
   useEffect(() => {
     return () => {
@@ -60,6 +62,18 @@ const CrashGraph = () => {
       }),
     );
   }, [gameState, multiplier]);
+
+  useEffect(() => {
+    if (gameState === "running" && previousGameStateRef.current !== "running") {
+      playSoundCue("round-start");
+    }
+
+    if (gameState === "crashed" && previousGameStateRef.current !== "crashed") {
+      playSoundCue("crash");
+    }
+
+    previousGameStateRef.current = gameState;
+  }, [gameState]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

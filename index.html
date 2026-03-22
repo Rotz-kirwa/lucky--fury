@@ -20,48 +20,77 @@
     <meta name="twitter:image" content="/favicon.jpg" />
     <script>
       (() => {
+        const createRandomUUID = () => {
+          const bytes = new Uint8Array(16);
+          const cryptoSource =
+            typeof globalThis.crypto !== "undefined" &&
+            typeof globalThis.crypto.getRandomValues === "function"
+              ? globalThis.crypto
+              : null;
+
+          if (cryptoSource) {
+            cryptoSource.getRandomValues(bytes);
+          } else {
+            for (let index = 0; index < bytes.length; index += 1) {
+              bytes[index] = Math.floor(Math.random() * 256);
+            }
+          }
+
+          bytes[6] = (bytes[6] & 15) | 64;
+          bytes[8] = (bytes[8] & 63) | 128;
+
+          const hex = Array.from(bytes, (byte) =>
+            byte.toString(16).padStart(2, "0"),
+          );
+
+          return [
+            hex.slice(0, 4).join(""),
+            hex.slice(4, 6).join(""),
+            hex.slice(6, 8).join(""),
+            hex.slice(8, 10).join(""),
+            hex.slice(10, 16).join(""),
+          ].join("-");
+        };
+
+        const installRandomUUID = (target) => {
+          if (!target || typeof target.randomUUID === "function") {
+            return typeof target?.randomUUID === "function";
+          }
+
+          try {
+            Object.defineProperty(target, "randomUUID", {
+              value: createRandomUUID,
+              configurable: true,
+            });
+          } catch {
+            try {
+              target.randomUUID = createRandomUUID;
+            } catch {
+              return false;
+            }
+          }
+
+          return typeof target.randomUUID === "function";
+        };
+
         if (typeof globalThis.crypto === "undefined") {
-          Object.defineProperty(globalThis, "crypto", {
-            value: {},
-            configurable: true,
-          });
+          try {
+            Object.defineProperty(globalThis, "crypto", {
+              value: {},
+              configurable: true,
+            });
+          } catch {
+            // Ignore environments that lock the global crypto binding.
+          }
         }
 
-        if (typeof globalThis.crypto.randomUUID === "function") {
+        if (installRandomUUID(globalThis.crypto)) {
           return;
         }
 
-        const fillRandomValues =
-          typeof globalThis.crypto.getRandomValues === "function"
-            ? (array) => globalThis.crypto.getRandomValues(array)
-            : (array) => {
-                for (let index = 0; index < array.length; index += 1) {
-                  array[index] = Math.floor(Math.random() * 256);
-                }
-
-                return array;
-              };
-
-        Object.defineProperty(globalThis.crypto, "randomUUID", {
-          value() {
-            const bytes = fillRandomValues(new Uint8Array(16));
-            bytes[6] = (bytes[6] & 15) | 64;
-            bytes[8] = (bytes[8] & 63) | 128;
-
-            const hex = Array.from(bytes, (byte) =>
-              byte.toString(16).padStart(2, "0"),
-            );
-
-            return [
-              hex.slice(0, 4).join(""),
-              hex.slice(4, 6).join(""),
-              hex.slice(6, 8).join(""),
-              hex.slice(8, 10).join(""),
-              hex.slice(10, 16).join(""),
-            ].join("-");
-          },
-          configurable: true,
-        });
+        if (typeof globalThis.Crypto !== "undefined") {
+          installRandomUUID(globalThis.Crypto.prototype);
+        }
       })();
     </script>
   </head>

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Bell, BellOff, Menu, Settings, Volume2, VolumeX, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +12,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
+import { getSoundEnabled, persistSoundEnabled, playSoundCue, primeSound } from "@/lib/sound";
 
 type AuthMode = "login" | "register";
 
 const Navbar = () => {
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => getSoundEnabled());
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -38,6 +39,10 @@ const Navbar = () => {
   const toggleSound = () => {
     setSoundEnabled((current) => {
       const next = !current;
+      persistSoundEnabled(next);
+      if (next) {
+        void primeSound().then(() => playSoundCue("toggle"));
+      }
       toast.success(next ? "Game sound enabled" : "Game sound muted");
       return next;
     });
@@ -76,6 +81,24 @@ const Navbar = () => {
     setSettingsOpen(true);
     setMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (!soundEnabled || typeof window === "undefined") {
+      return;
+    }
+
+    const unlockSound = () => {
+      void primeSound();
+    };
+
+    window.addEventListener("pointerdown", unlockSound, { once: true });
+    window.addEventListener("keydown", unlockSound, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", unlockSound);
+      window.removeEventListener("keydown", unlockSound);
+    };
+  }, [soundEnabled]);
 
   return (
     <nav className="relative sticky top-0 z-50 w-full bg-card/95 backdrop-blur-md border-b border-border/50">
