@@ -135,12 +135,66 @@ const CrashGraph = () => {
       // Plane icon at tip
       if (points.length > 0) {
         const [tipX, tipY] = points[points.length - 1];
+        const prevIdx = Math.max(0, points.length - 10);
+        const [prevX, prevY] = points[prevIdx];
+        const angle = Math.atan2(tipY - prevY, tipX - prevX);
+        
         ctx.save();
         ctx.translate(tipX, tipY);
-        ctx.rotate(-0.4);
-        ctx.font = "20px serif";
-        ctx.fillStyle = gameState === "crashed" ? "#ef4444" : "#f43f5e";
-        ctx.fillText("✈", -10, 5);
+        ctx.rotate(angle);
+        
+        const color = gameState === "crashed" ? "#ef4444" : "#dc2626";
+        const s = 1.4;
+        
+        // Fuselage
+        ctx.beginPath();
+        ctx.moveTo(18 * s, 0);
+        ctx.lineTo(-10 * s, -3 * s);
+        ctx.lineTo(-14 * s, 0);
+        ctx.lineTo(-10 * s, 3 * s);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        // Top wing
+        ctx.beginPath();
+        ctx.moveTo(4 * s, -2 * s);
+        ctx.lineTo(-6 * s, -12 * s);
+        ctx.lineTo(-10 * s, -12 * s);
+        ctx.lineTo(-4 * s, -2 * s);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        // Bottom wing
+        ctx.beginPath();
+        ctx.moveTo(4 * s, 2 * s);
+        ctx.lineTo(-6 * s, 12 * s);
+        ctx.lineTo(-10 * s, 12 * s);
+        ctx.lineTo(-4 * s, 2 * s);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        // Tail fin
+        ctx.beginPath();
+        ctx.moveTo(-10 * s, -1 * s);
+        ctx.lineTo(-16 * s, -7 * s);
+        ctx.lineTo(-18 * s, -7 * s);
+        ctx.lineTo(-14 * s, -1 * s);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.moveTo(-10 * s, 1 * s);
+        ctx.lineTo(-16 * s, 7 * s);
+        ctx.lineTo(-18 * s, 7 * s);
+        ctx.lineTo(-14 * s, 1 * s);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+        
         ctx.restore();
       }
 
