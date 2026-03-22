@@ -95,16 +95,19 @@ const CrashGraph = () => {
 
       // Draw curve
       const points: [number, number][] = [];
-      const margin = 40;
-      const graphW = w - margin * 2;
-      const graphH = h - margin * 2;
+      const marginLeft = 10;
+      const marginBottom = 14;
+      const marginTop = 40;
+      const marginRight = 40;
+      const graphW = w - marginLeft - marginRight;
+      const graphH = h - marginTop - marginBottom;
       const maxM = Math.max(currentMultiplier, 2);
 
       for (let i = 0; i <= 200; i++) {
         const t = i / 200;
         const m = 1 + t * (currentMultiplier - 1);
-        const px = margin + t * graphW;
-        const py = h - margin - ((m - 1) / (maxM - 1)) * graphH * 0.85;
+        const px = marginLeft + t * graphW;
+        const py = h - marginBottom - ((m - 1) / (maxM - 1)) * graphH * 0.85;
         points.push([px, py]);
       }
 
@@ -115,9 +118,9 @@ const CrashGraph = () => {
       grad.addColorStop(1, "rgba(236, 72, 153, 0.3)");
 
       ctx.beginPath();
-      ctx.moveTo(margin, h - margin);
+      ctx.moveTo(marginLeft, h - marginBottom);
       points.forEach(([x, y]) => ctx.lineTo(x, y));
-      ctx.lineTo(points[points.length - 1][0], h - margin);
+      ctx.lineTo(points[points.length - 1][0], h - marginBottom);
       ctx.closePath();
       ctx.fillStyle = grad;
       ctx.fill();
