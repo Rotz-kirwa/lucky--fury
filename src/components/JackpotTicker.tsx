@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { RefreshCw } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
 
-const multipliers = [
+const initialMultipliers = [
   { value: "1.58x", color: "text-neon-blue" },
   { value: "1.85x", color: "text-neon-pink" },
   { value: "1.50x", color: "text-neon-blue" },
@@ -32,15 +34,36 @@ const multipliers = [
 ];
 
 const JackpotTicker = () => {
+  const [jackpotAmount, setJackpotAmount] = useState(25000);
+  const [multipliers, setMultipliers] = useState(initialMultipliers);
+
+  const handleRefresh = () => {
+    setMultipliers((current) => {
+      const offset = Math.max(1, Math.floor(Math.random() * current.length));
+      return [...current.slice(offset), ...current.slice(0, offset)];
+    });
+
+    setJackpotAmount((current) => current + 250 + Math.floor(Math.random() * 1250));
+    toast.success("Live history refreshed", {
+      description: "Latest crash rounds and jackpot feed have been updated.",
+    });
+  };
+
   return (
     <div className="w-full animate-float-up" style={{ animationDelay: "0.1s" }}>
       {/* Jackpot banner */}
       <div className="bg-gradient-to-r from-neon-green/20 via-neon-green/10 to-neon-green/20 border-b border-neon-green/20 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-neon-green font-bold text-sm">KES 25,000</span>
+          <span className="text-neon-green font-bold text-sm">
+            KES {jackpotAmount.toLocaleString("en-US")}
+          </span>
           <span className="text-foreground/80 text-sm font-medium">Lucky Jet Jackpot</span>
         </div>
-        <button className="p-1.5 rounded-full hover:bg-secondary transition-colors text-neon-green">
+        <button
+          type="button"
+          onClick={handleRefresh}
+          className="p-1.5 rounded-full hover:bg-secondary transition-colors text-neon-green"
+        >
           <RefreshCw className="h-4 w-4" />
         </button>
       </div>

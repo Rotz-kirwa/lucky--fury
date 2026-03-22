@@ -20,6 +20,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 
 const SMALL_Y_AXIS_LEVELS = [1, 2, 5, 10, 20, 50, 100];
 const FULL_Y_AXIS_LEVELS = [1, 2, 3, 5, 10, 20, 50, 100];
+const ROUND_STATE_EVENT = "luckyjet-round-state";
 
 const CrashGraph = () => {
   const [multiplier, setMultiplier] = useState(1.0);
@@ -44,6 +45,21 @@ const CrashGraph = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent(ROUND_STATE_EVENT, {
+        detail: {
+          gameState,
+          multiplier,
+        },
+      }),
+    );
+  }, [gameState, multiplier]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
